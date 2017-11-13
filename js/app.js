@@ -82,8 +82,6 @@ function flipCard(card, val) {
 			document.getElementById('star3').className = "fa fa-star-o";
 		} else if (matchAttempt > perfectVictory + 4 && matchAttempt < perfectVictory + 6) {
 			document.getElementById('star2').className = "fa fa-star-o";
-		} else if (matchAttempt > perfectVictory + 8) {
-			document.getElementById('star1').className = "fa fa-star-o";
 		}
 		//Store flipped card
 		if (flippedCards.length === 0) {

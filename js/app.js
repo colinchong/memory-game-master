@@ -1,7 +1,7 @@
 //Initial Settings
 var flippedCards = [];
 var cardIds = [];
-var cardsFlipped = 0;
+var matchAttempt = 0;
 var matched = 0;
 var clockState = false;
 
@@ -20,13 +20,11 @@ var sets = cards.length / 2;
 //Resets the game
 function setCards() {
 	//Resets clock to start and clear count
-	clockState = true;
-	clearTimeout(timerStart);
-	timerStart();
 	document.getElementById("timer").innerHTML = "00" + ":" + "00" + ":" + "00";
+	clockState = false;
 	//Resets cards
-	cardsFlipped = 0;
-	document.getElementById('movesNumber').innerHTML = cardsFlipped;
+	matchAttempt = 0;
+	document.getElementById('movesNumber').innerHTML = matchAttempt;
 	matched = 0;
 	var card = '';
 	shuffle(cards);
@@ -69,18 +67,22 @@ function shuffle(array) {
 
 function flipCard(card, val) {
 	if (flippedCards.length < 2) {
+		//Starts the timer when first card is flipped
+		if (clockState == false){
+			clockState = true;
+			clearTimeout(timerStart);
+			timerStart();
+		}
 		//Show cards on flip
 		card.className += " open show";
 		card.innerHTML = "<i class='fa fa-" + val + "'></i>";
-		//Increment move count
-		cardsFlipped += 1;
-		document.getElementById('movesNumber').innerHTML = cardsFlipped;
 		//Star Ratings
-		if (cardsFlipped > cards.length && cardsFlipped < cards.length + 4) {
+		var perfectVictory = cards.length / 2;
+		if (matchAttempt > perfectVictory && matchAttempt < perfectVictory + 2 ) {
 			document.getElementById('star3').className = "fa fa-star-o";
-		} else if (cardsFlipped > cards.length + 4 && cardsFlipped < cards.length + 8) {
+		} else if (matchAttempt > perfectVictory + 4 && matchAttempt < perfectVictory + 6) {
 			document.getElementById('star2').className = "fa fa-star-o";
-		} else if (cardsFlipped > cards.length + 12) {
+		} else if (matchAttempt > perfectVictory + 8) {
 			document.getElementById('star1').className = "fa fa-star-o";
 		}
 		//Store flipped card
@@ -98,6 +100,9 @@ function flipCard(card, val) {
 				flippedCards = [];
 				cardIds = [];
 				matched += 1;
+				matchAttempt += 1;
+				//Increment move count
+				document.getElementById('movesNumber').innerHTML = matchAttempt;
 				//Check for win condition
 				if (matched == sets) {
 					modal.style.display = "block";
@@ -105,8 +110,9 @@ function flipCard(card, val) {
 					timerChange();
 					var stars = document.getElementsByClassName("fa-star");
 					document.getElementById("starsAtWin").innerHTML = stars.length;
-					document.getElementById('movesAtWin').innerHTML = cardsFlipped;
+					document.getElementById('movesAtWin').innerHTML = matchAttempt;
 					document.getElementById('timeAtWin').innerHTML = document.getElementById("timer").innerHTML;
+					clockState = false;
 					// When the user clicks on button, close the modal
 					playAgainButton.onclick = function() {
 						modal.style.display = "none";
@@ -120,6 +126,9 @@ function flipCard(card, val) {
 					document.getElementById(cardIds[1]).className = "card";
 					flippedCards = [];
 					cardIds = [];
+					matchAttempt += 1;
+					//Increment move count
+					document.getElementById('movesNumber').innerHTML = matchAttempt;
 				}
 				//Flip wrong guess back over
 				setTimeout(cardReset, 500);
